@@ -11,7 +11,7 @@ class ConnectFour:
     playing = True
 
     def __init__(self):
-        self.board = [[' ' for _ in range(self.rows)] for _ in range(self.cols)]
+        self.board = [[' ' for _ in range(self.cols)] for _ in range(self.rows)]
     
     def play_move(self, position, player):
         for i in range(self.rows - 1, -1, -1):
@@ -64,17 +64,25 @@ class ConnectFour:
                 print(j, end="|")
             print()
         print(" 1 2 3 4 5 6 7")
+
+    def get_input(self, turn):
+        while True:
+            print(turn + "'s turn to move (1-7):", end=" ")
+            response = input()
+            if response.isdigit():
+                if 1 <= int(response) <= 7:
+                    if self.board[0][int(response) - 1] == ' ':
+                        return int(response) - 1
+            print("invalid")
     
     def play_game(self):
         turn = 'x'
         filled = 0
-        while self.playing and filled < self.rows * self.columns:
+        while self.playing:
             self.print_board()
-            while True:
-                print(turn + "'s turn to move (1-7):", end=" ")
-                move = int(input()) - 1
-                if self.play_move(move, turn):
-                    break
+            
+            move = self.get_input(turn)
+            self.play_move(move, turn)
             
             result = self.check_win()
             if result == 'x':
@@ -87,6 +95,10 @@ class ConnectFour:
                 self.playing = False
             
             filled += 1
+            if filled >= self.rows * self.cols:
+                self.print_board()
+                break
+
             if turn == 'x': turn = 'o'
             else: turn = 'x'
 
